@@ -9,15 +9,12 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 @State(Scope.Thread)
 public class ExperimentRunner {
+    public static void main(String[] args) throws RunnerException {
+        Options opt = new OptionsBuilder()
+                .include(Experiments.class.getSimpleName())
+                .forks(1)
+                .build();
 
-    public class BenchmarkRunner {
-        public static void main(String[] args) throws RunnerException {
-            Options opt = new OptionsBuilder()
-                    .include(Experiments.class.getSimpleName())
-                    .forks(1)
-                    .build();
-
-            new Runner(opt).run();
-        }
+        new Runner(opt).run();
     }
 }
