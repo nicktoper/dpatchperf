@@ -11,7 +11,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 public class ExperimentRunner {
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(Experiments.class.getSimpleName())
+                .include(JmhExperiments.class.getSimpleName())
                 .forks(1)
                 .build();
 

@@ -3,14 +3,10 @@ package com.deviantabstraction.dpatchperf;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Warmup(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
-@Fork(5)
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
-@State(Scope.Benchmark)
+
 public class Experiments {
 
 
@@ -18,9 +14,6 @@ public class Experiments {
     private static final int SIZE = 1_000_000;
     Random random = new Random();
 
-
-    @Benchmark
-    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
     public void callSimpleSite() {
         long total = 0;
         for (int i = 0; i < SIZE; i++) {
@@ -34,9 +27,6 @@ public class Experiments {
         System.out.println("Time taken by simple site: " + total / SIZE + " ns");
     }
 
-
-    @Benchmark
-    @CompilerControl(CompilerControl.Mode.DONT_INLINE)
     public void callComplexSite() {
         List<Integer> list;
         long total = 0;
@@ -44,8 +34,8 @@ public class Experiments {
 
         for (int j = 0; j < SIZE; j++) {
             var bound = random.nextInt(10);
-            if (bound %5 == 0) {
-                list = new ArrayList<>();
+            if (bound % 5 == 0) {
+                list = new LinkedList<>();
             } else {
                 list = new ArrayList<>();
             }
