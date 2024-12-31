@@ -6,7 +6,10 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * Old experiment. I didn't use it because Reddit smart people told me to use JMH.
+ * That being said they're in line with JMH results.
+ */
 public class Experiments {
 
 

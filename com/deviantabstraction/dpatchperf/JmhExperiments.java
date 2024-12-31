@@ -30,7 +30,7 @@ public class JmhExperiments {
      * Number of loop iterations we do per benchmark method call (batching).
      * Try "100", "1000", "10000" etc.
      */
-    @Param({"1000"})
+    @Param({"15000"})
     int size;
 
     /**
@@ -57,6 +57,20 @@ public class JmhExperiments {
      * Random for shuffling which workers get used in the polymorphic scenario.
      */
     Random random;
+
+    //Added by compiler
+    // Create arrays for each worker type
+    private int[] nextFreeSlot = new int[10];
+    Worker0[] worker0s = new Worker0[size];
+    Worker1[] worker1s = new Worker1[size];
+    Worker2[] worker2s = new Worker2[size];
+    Worker3[] worker3s = new Worker3[size];
+    Worker4[] worker4s = new Worker4[size];
+    Worker5[] worker5s = new Worker5[size];
+    Worker6[] worker6s = new Worker6[size];
+    Worker7[] worker7s = new Worker7[size];
+    Worker8[] worker8s = new Worker8[size];
+    Worker9[] worker9s = new Worker9[size];
 
     // ------------------------------------------------------------------------------------
     // 1) Define a sealed interface Worker with final classes  (Java 17+)
@@ -182,6 +196,20 @@ public class JmhExperiments {
                 new Worker0(), new Worker1(), new Worker2(), new Worker3(), new Worker4(),
                 new Worker5(), new Worker6(), new Worker7(), new Worker8(), new Worker9()
         };
+        nextFreeSlot = new int[10];  // fixed size 10 for all worker types
+        worker0s = new Worker0[size];
+        worker1s = new Worker1[size];
+        worker2s = new Worker2[size];
+        worker3s = new Worker3[size];
+        worker4s = new Worker4[size];
+        worker5s = new Worker5[size];
+        worker6s = new Worker6[size];
+        worker7s = new Worker7[size];
+        worker8s = new Worker8[size];
+        worker9s = new Worker9[size];
+
+
+
 
         // Create an array the size of "size" (the loop count),
         // so each iteration in the benchmark can pick from it.
@@ -192,8 +220,23 @@ public class JmhExperiments {
         for (int i = 0; i < size; i++) {
             // Which worker index for this slot?
             int idx = i % numWorkers;  // e.g., if numWorkers=5, this cycles 0..4
-            workers[i] = allPossible[idx];
+            Worker worker = allPossible[idx];
+            workers[i] = worker;
+
+            //ADDEED
+            if (worker instanceof Worker0) worker0s[nextFreeSlot[0]++] = (Worker0) worker;
+            else if (worker instanceof Worker1) worker1s[nextFreeSlot[1]++] = (Worker1) worker;
+            else if (worker instanceof Worker2) worker2s[nextFreeSlot[2]++] = (Worker2) worker;
+            else if (worker instanceof Worker3) worker3s[nextFreeSlot[3]++] = (Worker3) worker;
+            else if (worker instanceof Worker4) worker4s[nextFreeSlot[4]++] = (Worker4) worker;
+            else if (worker instanceof Worker5) worker5s[nextFreeSlot[5]++] = (Worker5) worker;
+            else if (worker instanceof Worker6) worker6s[nextFreeSlot[6]++] = (Worker6) worker;
+            else if (worker instanceof Worker7) worker7s[nextFreeSlot[7]++] = (Worker7) worker;
+            else if (worker instanceof Worker8) worker8s[nextFreeSlot[8]++] = (Worker8) worker;
+            else if (worker instanceof Worker9) worker9s[nextFreeSlot[9]++] = (Worker9) worker;
         }
+
+
 
         // For the monomorphic scenario, we just pick Worker0 (or the first one).
         monoWorker = allPossible[0];
@@ -234,34 +277,16 @@ public class JmhExperiments {
      * The JIT *might* compile it into a switch table.
      */
     @Benchmark
-    public void patternSwitchMegamorphic(Blackhole bh) {
-        for (int i = 0; i < size; i++) {
-            Worker w = workers[i];
-            // slightly faster than switch/case
-
-            if (w instanceof Worker0 a) {
-                bh.consume(a.doWork(i));
-            } else if (w instanceof Worker1 b) {
-                bh.consume(b.doWork(i));
-            } else if (w instanceof Worker2 c) {
-                bh.consume(c.doWork(i));
-            } else if (w instanceof Worker3 d) {
-                bh.consume(d.doWork(i));
-            } else if (w instanceof Worker4 e) {
-                bh.consume(e.doWork(i));
-            } else if (w instanceof Worker5 f) {
-                bh.consume(f.doWork(i));
-            } else if (w instanceof Worker6 g) {
-                bh.consume(g.doWork(i));
-            } else if (w instanceof Worker7 h) {
-                bh.consume(h.doWork(i));
-            } else if (w instanceof Worker8 j) {
-                bh.consume(j.doWork(i));
-            } else if (w instanceof Worker9 k) {
-                bh.consume(k.doWork(i));
-            } else {
-                throw new IllegalStateException("Unknown worker type " + w.getClass());
-            }
-        }
+    public void callOptim(Blackhole bh) {
+        for (int i = 0; i < nextFreeSlot[0]; i++) bh.consume(worker0s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[1]; i++) bh.consume(worker1s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[2]; i++) bh.consume(worker2s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[3]; i++) bh.consume(worker3s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[4]; i++) bh.consume(worker4s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[5]; i++) bh.consume(worker5s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[6]; i++) bh.consume(worker6s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[7]; i++) bh.consume(worker7s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[8]; i++) bh.consume(worker8s[i].doWork(i));
+        for (int i = 0; i < nextFreeSlot[9]; i++) bh.consume(worker9s[i].doWork(i));
     }
 }
