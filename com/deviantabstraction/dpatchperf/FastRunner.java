@@ -24,7 +24,7 @@ public class FastRunner {
 
         for (int i = 0; i < SIZE; i++) {
             var start = System.nanoTime();
-            exp.callOptim(bh);
+            exp.callSimpleMonomorphic(bh);
             total += System.nanoTime() - start;
 
         }

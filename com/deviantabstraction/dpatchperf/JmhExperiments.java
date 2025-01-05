@@ -51,7 +51,7 @@ public class JmhExperiments {
     /**
      * We'll also store a single Worker for the truly "monomorphic" benchmark.
      */
-    Worker monoWorker;
+    Worker0 monoWorker;
 
     /**
      * Random for shuffling which workers get used in the polymorphic scenario.
@@ -80,6 +80,14 @@ public class JmhExperiments {
     sealed interface Worker permits Worker0, Worker1, Worker2, Worker3, Worker4,
             Worker5, Worker6, Worker7, Worker8, Worker9 {
         int doWork(int x);
+
+        static int doStatic(int x) {
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 50; i++) {
+                sum += (x + i) * (x - i + 2);
+            }
+            return sum;        }
     }
 
     public static final class Worker0 implements Worker {
@@ -239,7 +247,7 @@ public class JmhExperiments {
 
 
         // For the monomorphic scenario, we just pick Worker0 (or the first one).
-        monoWorker = allPossible[0];
+        monoWorker = new Worker0();
     }
 
     // ------------------------------------------------------------------------------------
@@ -252,11 +260,19 @@ public class JmhExperiments {
      */
     @Benchmark
     public void callSimpleMonomorphic(Blackhole bh) {
-        Worker w = monoWorker;
+        Worker0 w = monoWorker;
         for (int i = 0; i < size; i++) {
             bh.consume(w.doWork(i));
         }
     }
+
+    @Benchmark
+    public void callSimpleStatic(Blackhole bh) {
+        for (int i = 0; i < size; i++) {
+            bh.consume(Worker.doStatic(i));
+        }
+    }
+
 
     /**
      * A polymorphic/megamorphic call site:
