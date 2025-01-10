@@ -81,13 +81,6 @@ public class JmhExperiments {
             Worker5, Worker6, Worker7, Worker8, Worker9 {
         int doWork(int x);
 
-        static int doStatic(int x) {
-            // Some arithmetic
-            int sum = 0;
-            for (int i = 0; i < 50; i++) {
-                sum += (x + i) * (x - i + 2);
-            }
-            return sum;        }
     }
 
     public static final class Worker0 implements Worker {
@@ -105,55 +98,71 @@ public class JmhExperiments {
     public static final class Worker1 implements Worker {
         @Override
         public int doWork(int x) {
-            int prod = 1;
-            for (int i = 1; i < 6; i++) {
-                prod = prod ^ ((x + i) * 31);
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
             }
-            return prod;
+            return sum;
+
         }
     }
 
     public static final class Worker2 implements Worker {
         @Override
         public int doWork(int x) {
-            return Integer.rotateLeft(x, (x & 7)) + 0xABCD;
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
+            }
+            return sum;
         }
     }
 
     public static final class Worker3 implements Worker {
         @Override
         public int doWork(int x) {
-            // simple fibonacci-ish
-            int a=1,b=1;
-            for(int i=0; i<4; i++){
-                int tmp=a+b+x;
-                a=b;b=tmp;
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
             }
-            return b;
+            return sum;
         }
     }
 
     public static final class Worker4 implements Worker {
         @Override
         public int doWork(int x) {
-            return (x * 12345) ^ 0x55AA55AA;
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
+            }
+            return sum;
         }
     }
 
     public static final class Worker5 implements Worker {
         @Override
         public int doWork(int x) {
-            // Slightly different
-            return (x+1)*(x+2)*(x+3);
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
+            }
+            return sum;
         }
     }
 
     public static final class Worker6 implements Worker {
         @Override
         public int doWork(int x) {
+            // Some arithmetic
             int sum = 0;
-            for(int i=0;i<5;i++){
-                sum += (x << i) - i;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
             }
             return sum;
         }
@@ -162,31 +171,36 @@ public class JmhExperiments {
     public static final class Worker7 implements Worker {
         @Override
         public int doWork(int x) {
-            // Some modulo arithmetic
-            int r = x;
-            for(int i=1;i<=5;i++){
-                r = ((r + i)*7) % 999983;
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
             }
-            return r;
+            return sum;
         }
     }
 
     public static final class Worker8 implements Worker {
         @Override
         public int doWork(int x) {
-            return x*(x-1)*(x+1);
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
+            }
+            return sum;
         }
     }
 
     public static final class Worker9 implements Worker {
         @Override
         public int doWork(int x) {
-            // Another small loop
-            int accum = x;
-            for(int i=0;i<5;i++){
-                accum ^= (accum << 1);
+            // Some arithmetic
+            int sum = 0;
+            for (int i = 0; i < 5; i++) {
+                sum += (x + i) * (x - i + 2);
             }
-            return accum;
+            return sum;
         }
     }
 
@@ -259,20 +273,12 @@ public class JmhExperiments {
      * The JIT can inline heavily.
      */
     @Benchmark
-    public void callSimpleMonomorphic(Blackhole bh) {
+    public void callDirect(Blackhole bh) {
         Worker0 w = monoWorker;
         for (int i = 0; i < size; i++) {
             bh.consume(w.doWork(i));
         }
     }
-
-    @Benchmark
-    public void callSimpleStatic(Blackhole bh) {
-        for (int i = 0; i < size; i++) {
-            bh.consume(Worker.doStatic(i));
-        }
-    }
-
 
     /**
      * A polymorphic/megamorphic call site:

@@ -21,16 +21,6 @@ public class FastRunner {
         var total = 0L;
 
         total = 0L;
-
-        for (int i = 0; i < SIZE; i++) {
-            var start = System.nanoTime();
-            exp.callSimpleMonomorphic(bh);
-            total += System.nanoTime() - start;
-
-        }
-        System.out.println("Iteration: " + SIZE +  "; time taken by switch megamorphic: " + total / SIZE + " ns");
-
-        /*total = 0L;
         for (int i = 0; i < SIZE; i++) {
             var start = System.nanoTime();
             exp.callMegamorphic(bh);
@@ -40,16 +30,15 @@ public class FastRunner {
         System.out.println("Iteration: " + SIZE +  "; time taken by megamorphic: " + total / SIZE + " ns");
 
 
-
-
         total = 0L;
+
         for (int i = 0; i < SIZE; i++) {
             var start = System.nanoTime();
-            exp.callSimpleMonomorphic(bh);
+            exp.callDirect(bh);
             total += System.nanoTime() - start;
 
         }
-        System.out.println("Iteration: " + SIZE +  "; time taken by monorphic: " + total / SIZE + " ns"); */
+        System.out.println("Iteration: " + SIZE +  "; time taken by direct: " + total / SIZE + " ns");
 
 
     }
